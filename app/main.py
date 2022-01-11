@@ -91,6 +91,7 @@ def update_message(message_id):
 
     if request.method == 'DELETE':
         db.session.delete(message_entry)
+        db.session.commit()
         return jsonify("deleted successfully")
 
 
