@@ -107,8 +107,8 @@ def send_message():
     data = request.form
     message = Message()
 
-    message.message = data.get('message', None)
-    if not message.message:
+    message.text = data.get('message', None)
+    if not message.text:
         return jsonify("message not included"), 400
 
     message.subject = data.get('subject', None)
@@ -122,8 +122,8 @@ def send_message():
     message.receiver_id = to_user.id
     message.created_at = datetime.now()
     message.sender_id = current_user.id
-    to_entry = MessageList(user_id=to_user.id, message=message)
-    from_entry = MessageList(user_id=current_user.id, message=message)
+    to_entry = MessageList(user_id=to_user.id, message=message, read=False)
+    from_entry = MessageList(user_id=current_user.id, message=message, read=True)
     db.session.add(message)
     db.session.add(to_entry)
     db.session.add(from_entry)
