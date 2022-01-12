@@ -53,13 +53,14 @@ def user_lookup_callback(_, jwt_data):
     return User.query.filter_by(id=identity).one_or_none()
 
 
-@app.route('/')
-def hi():
-    return "hello world!"
-
-
 @app.route('/login', methods=['POST'])
 def login():
+    """
+    send email of user in order to get access token
+    :return:
+    access token
+    """
+
     email = request.form['email']
     user = User.query.filter_by(email=email).one_or_none()
     if not user:
@@ -72,6 +73,10 @@ def login():
 @app.route('/messages/unread')
 @jwt_required()
 def get_unread_messages():
+    """
+    returns list of all unread messages for current user
+    """
+
     messages = [entry.message.as_dict() for entry in current_user.message_list if not entry.read]
     return jsonify(messages)
 
@@ -79,6 +84,11 @@ def get_unread_messages():
 @app.route('/messages/<int:message_id>', methods=['GET', 'DELETE'])
 @jwt_required()
 def update_message(message_id):
+    """
+    read or delete a specific message by its id
+    :param message_id:
+    """
+
     message_entry = MessageList.query.filter_by(message_id=message_id, user_id=current_user.id).one_or_none()
 
     if not message_entry:
@@ -98,6 +108,10 @@ def update_message(message_id):
 @app.route('/messages')
 @jwt_required()
 def get_messages():
+    """
+    returns a list of all messages for current user
+    """
+
     messages = [entry.message.as_dict() for entry in current_user.message_list]
     return jsonify(messages)
 
@@ -105,6 +119,10 @@ def get_messages():
 @app.route('/message', methods=['POST'])
 @jwt_required()
 def send_message():
+    """
+    creates message and returns it
+    """
+
     data = request.form
     message = Message()
 
